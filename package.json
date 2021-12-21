@@ -14,5 +14,15 @@
     "converter"
   ],
   "author": "RogelioLB",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ffmetadata": "^1.7.0",
+    "ffmpeg-static": "^4.4.0",
+    "ytdl-core": "^4.9.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
+  }
 }
