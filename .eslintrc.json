@@ -27,6 +27,7 @@
         "max-len":"off",
         "comma-dangle":"off",
         "no-trailing-spaces":"off",
-        "no-async-promise-executor":"off"
+        "no-async-promise-executor":"off",
+        "default-param-last":"off"
     }
 }

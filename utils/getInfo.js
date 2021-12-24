@@ -1,14 +1,14 @@
 const ytdl = require("ytdl-core")
 
 /**
- * @typedef {Object} Thumbnail
+ * @typedef {object} thumbnail
  * @property {string} url
  * @property {number} width
  * @property {number} height
  */
 
 /**
- * @typedef {Object} Format
+ * @typedef {object} format
  * @property {number} audioBitrate
  * @property {number} audioQuality
  * @property {number} approxDurationMs
@@ -21,20 +21,20 @@ const ytdl = require("ytdl-core")
  */
 
 /**
- * @typedef {object} VideoInfo
+ * @typedef {object} videoInfo
  * @property {string} title
  * @property {string} author
  * @property {number} lengthSeconds
  * @property {number} viewCount
- * @property {Array<Format>} formats
- * @property {Array<Format>} formatsAudio
- * @property {Array<Format>} formatsVideo
- * @property {Array<Thumbnail>} thumbnails
+ * @property {Array<format>} formats
+ * @property {Array<format>} formatsAudio
+ * @property {Array<format>} formatsVideo
+ * @property {Array<thumbnail>} thumbnails
  */
 
 /**
  * @param {string} url
- * @return {Promise<VideoInfo>}
+ * @return {Promise<videoInfo>}
  */
 const getInfo = (url) => new Promise((resolve, reject) => {
     try {

@@ -8,20 +8,23 @@ const parserTitles = require("./parserTitles")
 
 ffmMT.setFfmpegPath(ffmpeg);
 
-/**
- * Executed when the process ends
- * @name onClose
- * @function
- */
+/** 
+ * @typedef {import("./typedefs").options} options
+ * @typedef {import("./typedefs").onData} onData
+ * @typedef {import("./typedefs").onClose} onClose
+*/
+
 
 /**
- * @param {string} url 
- * @param {number} itag 
- * @param {string} directoryDownload 
- * @param {onClose} onClose 
+ * 
+ * @param {options} options
+ * @param {onData} onData Event executed everytime the process is executed, by default prints the percentage of the process
+ * @param {onClose} onClose Event executed when the process ends
  */
-const convertVideo = async (url, itag, directoryDownload, onClose) => {
+
+const convertVideo = async (options, onData, onClose) => {
     try {
+        const { url, itag, directoryDownload } = options
         const info = await getInfo(url)
         const tracker = {
             audio: {
@@ -71,13 +74,13 @@ const convertVideo = async (url, itag, directoryDownload, onClose) => {
         ffmpegProcess.stdio[3].on("data", () => {
             const videoTotal = (tracker.video.downloaded / tracker.video.total) * 100
             const audioTotal = (tracker.audio.downloaded / tracker.audio.total) * 100
-            console.log(videoTotal, audioTotal)
             const percentage = Math.round((videoTotal + audioTotal) / 2)
+            if (onData) onData(percentage)
             console.log(`Downloading: ${percentage}% for ${title}`)
         })
     
         ffmpegProcess.on("close", () => {
-            onClose()
+            if (onClose) onClose()
         })
     
         audio.pipe(ffmpegProcess.stdio[4])

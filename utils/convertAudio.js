@@ -9,19 +9,18 @@ const parserTitles = require("./parserTitles")
 ffmMT.setFfmpegPath(ffmpeg);
 
 /**
- * Executed when the process ends
- * @name onClose
- * @function
+ * @typedef {import("./typedefs").options} options
+ * @typedef {import("./typedefs").onData} onData
+ * @typedef {import("./typedefs").onClose} onClose
  */
-
 /**
- * @param {string} url 
- * @param {number} itag 
- * @param {string} directoryDownload 
- * @param {onClose} onClose 
- */
-const convertAudio = async (url, itag, directoryDownload, onClose) => {
+ * @param {options} options
+ * @param {onData} onData Event executed everytime the process is executed by default prints the percentage of the process
+ * @param {onClose} onClose Event executed when the process ends
+*/
+const convertAudio = async (options, onData, onClose) => {
     try {
+        const { url, itag, directoryDownload } = options
         const info = await getInfo(url)
         const tracker = {
             total: null,
@@ -58,17 +57,18 @@ const convertAudio = async (url, itag, directoryDownload, onClose) => {
         ffmpegProcess.stdio[3].on("data", () => {
             const percentage = Math.round((tracker.downloaded / tracker.total) * 100)
             console.log(`Downloading: ${percentage}% for ${title}`)
+            if (onData) onData(percentage)
         })
     
         ffmpegProcess.on("close", () => {
-            const options = {
+            const metadata = {
                 artist: info.author.name,
                 title,
                 album: info.author.name
             }
-            ffmMT.write(pathname, options, (err) => {
+            ffmMT.write(pathname, metadata, (err) => {
                 if (err) throw err;
-                onClose()
+                if (onClose) onClose()
             });
         })
     
