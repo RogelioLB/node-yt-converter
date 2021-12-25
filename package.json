@@ -1,10 +1,11 @@
 {
   "name": "yt-converter",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A youtube video converter for mp3 and mp4 using node-ytdl and ffmpeg",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "jsdoc -r src -t node_modules/tsd-jsdoc/dist -d lib",
+    "prepublishOnly": "jsdoc -r src -t node_modules/tsd-jsdoc/dist -d lib"
   },
   "keywords": [
     "youtube",
@@ -18,8 +19,11 @@
   "dependencies": {
     "ffmetadata": "^1.7.0",
     "ffmpeg-static": "^4.4.0",
+    "tsd-jsdoc": "^2.5.0",
+    "yt-converter": "^1.1.6",
     "ytdl-core": "^4.9.2"
   },
+  "types": "lib/index.d.ts",
   "devDependencies": {
     "eslint": "^8.5.0",
     "eslint-config-airbnb-base": "^15.0.0",

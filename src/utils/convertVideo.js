@@ -8,18 +8,33 @@ const parserTitles = require("./parserTitles")
 
 ffmMT.setFfmpegPath(ffmpeg);
 
-/** 
- * @typedef {import("./typedefs").options} options
- * @typedef {import("./typedefs").onData} onData
- * @typedef {import("./typedefs").onClose} onClose
-*/
+/**
+ * Executed when the process ends
+ * @callback onClose
+ * @returns {void}
+ */
 
+
+/**
+ * Executed everytime the process is executed
+ * @callback onData
+ * @param {string} percentage percentage of the process
+ * @returns {void}
+ */
+
+/**
+ * @typedef {object} options
+ * @property {string} url
+ * @property {number} itag
+ * @property {string} directoryDownload
+ */
 
 /**
  * 
  * @param {options} options
  * @param {onData} onData Event executed everytime the process is executed, by default prints the percentage of the process
  * @param {onClose} onClose Event executed when the process ends
+ * @memberof module:yt-converter
  */
 
 const convertVideo = async (options, onData, onClose) => {
@@ -74,7 +89,7 @@ const convertVideo = async (options, onData, onClose) => {
         ffmpegProcess.stdio[3].on("data", () => {
             const videoTotal = (tracker.video.downloaded / tracker.video.total) * 100
             const audioTotal = (tracker.audio.downloaded / tracker.audio.total) * 100
-            const percentage = Math.round((videoTotal + audioTotal) / 2)
+            const percentage = Math.round((videoTotal + audioTotal) / 2).toString()
             if (onData) onData(percentage)
             console.log(`Downloading: ${percentage}% for ${title}`)
         })

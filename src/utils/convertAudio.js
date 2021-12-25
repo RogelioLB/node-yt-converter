@@ -9,14 +9,31 @@ const parserTitles = require("./parserTitles")
 ffmMT.setFfmpegPath(ffmpeg);
 
 /**
- * @typedef {import("./typedefs").options} options
- * @typedef {import("./typedefs").onData} onData
- * @typedef {import("./typedefs").onClose} onClose
+ * Executed when the process ends
+ * @callback onClose
+ * @returns {void}
  */
+
+
+/**
+ * Executed everytime the process is executed
+ * @callback onData
+ * @param {string} percentage percentage of the process
+ * @returns {void}
+ */
+
+/**
+ * @typedef {object} options
+ * @property {string} url
+ * @property {number} itag
+ * @property {string} directoryDownload
+ */
+
 /**
  * @param {options} options
  * @param {onData} onData Event executed everytime the process is executed by default prints the percentage of the process
  * @param {onClose} onClose Event executed when the process ends
+ * @memberof module:yt-converter
 */
 const convertAudio = async (options, onData, onClose) => {
     try {
@@ -35,8 +52,9 @@ const convertAudio = async (options, onData, onClose) => {
             tracker.total = total
             tracker.downloaded = downloaded
         })
-    
+        console.log(__dirname)
         const pathname = path.resolve(process.cwd(), directoryDownload, `${title}.mp3`)
+        console.log(pathname)
     
         const ffmpegProcess = cp.spawn(ffmpeg, [
             "-loglevel", "8", "-hide_banner",
@@ -55,7 +73,7 @@ const convertAudio = async (options, onData, onClose) => {
         });
 
         ffmpegProcess.stdio[3].on("data", () => {
-            const percentage = Math.round((tracker.downloaded / tracker.total) * 100)
+            const percentage = Math.round((tracker.downloaded / tracker.total) * 100).toString()
             console.log(`Downloading: ${percentage}% for ${title}`)
             if (onData) onData(percentage)
         })

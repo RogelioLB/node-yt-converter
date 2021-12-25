@@ -35,6 +35,7 @@ const ytdl = require("ytdl-core")
 /**
  * @param {string} url
  * @return {Promise<videoInfo>}
+ * @memberof module:yt-converter
  */
 const getInfo = (url) => new Promise((resolve, reject) => {
     try {
