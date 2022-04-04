@@ -27,13 +27,21 @@ Info represents the video information:
 ### Download a video format mp4
 ```js
 const yt = require("yt-converter");
-yt.convertVideo("https://www.youtube.com/watch?v=dQw4w9WgXcQ", itag,path, onClose)
+yt.convertVideo({
+    url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
+    itag: 136,
+    directoryDownload: __dirname
+  }, onData, onClose)
 ```
 
 ### Download a video format mp3
 ```js
 const yt = require("yt-converter");
-yt.convertAudio("https://www.youtube.com/watch?v=dQw4w9WgXcQ", itag,path, onClose)
+yt.convertAudio({
+    url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
+    itag: 140,
+    directoryDownload: __dirname
+},onData,onClose)
 ```
 - **itag**: [itag]("https://en.wikipedia.org/wiki/YouTube#Quality_and_formats") represent an number of video format 
 - **path**: path to save the file
