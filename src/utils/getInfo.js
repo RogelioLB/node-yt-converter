@@ -71,7 +71,7 @@ const getInfo = (url) => new Promise((resolve, reject) => {
                 formatsVideo
             }
             resolve(infoObj)
-        })
+        }).catch((err) => reject(err))
     } catch (e) {
         reject(e)
     }
