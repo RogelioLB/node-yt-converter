@@ -30,7 +30,8 @@ const yt = require("yt-converter");
 yt.convertVideo({
     url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
     itag: 136,
-    directoryDownload: __dirname
+    directoryDownload: __dirname,
+    title: "Your title here"
   }, onData, onClose)
 ```
 
@@ -40,9 +41,11 @@ const yt = require("yt-converter");
 yt.convertAudio({
     url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
     itag: 140,
-    directoryDownload: __dirname
+    directoryDownload: __dirname,
+    title: "Your title here"
 },onData,onClose)
 ```
 - **itag**: [itag]("https://en.wikipedia.org/wiki/YouTube#Quality_and_formats") represent an number of video format 
 - **path**: path to save the file
+- **onData**: callback function that is executed everytime while the file is converted
 - **onClose**: callback function when the conversion is finished
