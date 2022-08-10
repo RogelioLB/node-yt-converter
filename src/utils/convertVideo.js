@@ -73,7 +73,7 @@ const convertVideo = async (options, onData, onClose) => {
             }
         }
         const format = info.formats.find((fm) => fm.itag === itag)
-        const title = options?.title || parserTitles(info.title)
+        const title = parserTitles(options?.title) || parserTitles(info.title)
         const audio = ytdl(url, {
             filter: "audioonly",
             quality: "lowestaudio",

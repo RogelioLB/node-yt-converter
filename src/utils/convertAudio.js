@@ -57,7 +57,7 @@ const convertAudio = async (options, onData, onClose) => {
             downloaded: null
         }
         const format = info.formats.find((fm) => fm.itag === itag)
-        const title = options?.title || parserTitles(info.title)
+        const title = parserTitles(options?.title) || parserTitles(info.title)
         const stream = ytdl(url, {
             filter: "audioonly",
             quality: format.itag
