@@ -11,7 +11,7 @@ const getThumb = yt.getInfo(link).then((info) => info.thumbnails[4].url)
 
 async function tes(link) {
     const title = await getTitle
-    const ingfo = await getIngfo
+    const info = await getIngfo
     const thumb = await getThumb
     const thumbnails = thumb.split("?")
     // console.log(thumbnails[0])
@@ -24,7 +24,7 @@ async function tes(link) {
     }, (percentage, size) => {
         console.log(Math.floor(percentage), size.totalSize)
     }, () => {
-        console.log(ingfo)
+        console.log(info)
     })
 }
 
