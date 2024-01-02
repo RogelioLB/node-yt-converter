@@ -4,6 +4,7 @@
         "module": "CommonJS",
         "moduleResolution": "Node",
         "outDir": "dist/",
-        "declaration": true
+        "declaration": true,
+        "rootDir": "src"
     }
 }
