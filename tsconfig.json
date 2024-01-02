@@ -1,7 +1,9 @@
 {
-    "exclude": ["types.ts"],
     "compilerOptions": {
         "esModuleInterop": true,
-        "rootDir": "./src",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "outDir": "dist/",
+        "declaration": true
     }
 }

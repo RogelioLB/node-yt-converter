@@ -15,6 +15,24 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "linebreak-style":["error","windows"]
+        "linebreak-style":["error","unix"],
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
+            }
+        ],
+        "no-unused-vars":"warn"
+    },
+    "settings": {
+        "import/resolver":{
+            "node":{
+                "extensions":[".js",".ts"]
+            }
+        }
     }
 }

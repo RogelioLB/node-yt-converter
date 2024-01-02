@@ -1,51 +1,65 @@
 # Node YoutubeDL - Easy to use downloader for YouTube videos
 
+> [!IMPORTANT]
+> Version 2.0 Released. New way to use it.
+
 ## Installation 
 ```bash
 npm install yt-converter
 ```
 
 ## Usage
-### Get Info from a video
-```js
-const yt = require("yt-converter");
-yt.getInfo("https://www.youtube.com/watch?v=dQw4w9WgXcQ").then(info => {
-    console.log(info);
-});
+
+There's two ways to use this library, convert audio or video. For this the package exports two functions named Audio, and Video, each one is for convert audio and video respectively.
+
+### Converting Youtube Video to MP3 file
+
+```ts
+import { Video, Audio } from '../dist/src/index';
+
+const link = 'https://www.youtube.com/watch?v=QI5idh3Uwh4&list=RDQI5idh3Uwh4&start_radio=1';
+
+async function test(url:string) {
+  const data = await Audio({
+    url,
+    onDownloading: (d) => console.log(d),
+  });
+
+  console.log(data.message);
+}
+
+test(link);
 ```
 
-Info represents the video information:
-- **title**
-- **author**
-- **thumbnails**
-- **formats**
-  - Contains the available formats for the video in an array
-  - The object has the property itag which can be used to convert the video
-- **formatsAudio**
-- **formatsVideo**
+### Converting Youtube Video to MP4 file
 
-### Download a video format mp4
-```js
-const yt = require("yt-converter");
-yt.convertVideo({
-    url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
-    itag: 136,
-    directoryDownload: __dirname,
-    title: "Your title here"
-  }, onData, onClose)
-```
+```ts
+import { Video, Audio } from '../dist/src/index';
 
-### Download a video format mp3
-```js
-const yt = require("yt-converter");
-yt.convertAudio({
-    url: "https://www.youtube.com/watch?v=JzbGrvkqV5w",
-    itag: 140,
-    directoryDownload: __dirname,
-    title: "Your title here"
-},onData,onClose)
+const link = 'https://www.youtube.com/watch?v=QI5idh3Uwh4&list=RDQI5idh3Uwh4&start_radio=1';
+
+async function test(url:string) {
+  const data = await Video({
+    url,
+    onDownloading: (d) => console.log(d),
+  });
+
+  console.log(data.message);
+}
+
+test(link);
 ```
-- **itag**: [itag]("https://en.wikipedia.org/wiki/YouTube#Quality_and_formats") represent an number of video format 
-- **path**: path to save the file
-- **onData**: callback function that is executed everytime while the file is converted
-- **onClose**: callback function when the conversion is finished
+### Function params
+
+Both fuctions need an options object.
+
+* *url*: Expect to be a string representing the url link of the youtube video. 
+* *directory (optional)*: Path relative where you want the file converted.
+* *itag*: This represents a number of a specific format. [For more information](https://en.wikipedia.org/wiki/YouTube#Quality_and_formats)
+* *onDownloading (optional)* : Function will be executed while the file is downloading.
+
+Once the functions Video and Audio are executed, returns a promise wich resolve a data object.
+
+* *message*
+* *error*
+* *videoInfo*

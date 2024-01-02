@@ -2,24 +2,19 @@ import ytdl, { videoFormat } from 'ytdl-core';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
+import ffmMT from 'ffmetadata';
 import parser from './parserTitles';
 import { ConvertOptions, FFmpegProcess, MessageResult } from '../../types';
 import fileExist from './fileExist';
 
-async function Video(options : ConvertOptions) {
+async function Audio(options : ConvertOptions) {
   const {
     directory = './', itag, url, title, onDownloading,
   } = options;
 
   const tracker = {
-    audio: {
-      total: null,
-      downloaded: null,
-    },
-    video: {
-      total: null,
-      downloaded: null,
-    },
+    total: null,
+    downloaded: null,
   };
 
   // Info Youtube
@@ -29,19 +24,15 @@ async function Video(options : ConvertOptions) {
   const fileTitle = title || parser(videoInfo.videoDetails.title);
 
   // Stream audio and video
-  const audio = ytdl(url, {
+  const stream = ytdl(url, {
     filter: 'audioonly',
-    quality: 'lowestaudio',
+    quality: format?.itag || 'highestaudio',
   }).on('progress', (_, downloaded, total) => {
-    tracker.audio = { downloaded, total };
-  });
-  const video = ytdl(url, {
-    quality: format?.itag || 'highestvideo',
-  }).on('progress', (_, downloaded, total) => {
-    tracker.video = { downloaded, total };
+    tracker.total = total;
+    tracker.downloaded = downloaded;
   });
 
-  const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp4`);
+  const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp3`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
     if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo });
@@ -50,18 +41,14 @@ async function Video(options : ConvertOptions) {
         '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
-        '-i', 'pipe:5',
-        '-map', '0:a',
-        '-map', '1:v',
-        '-c:v', 'copy',
         `${pathname}`,
       ], {
         windowsHide: true,
         stdio: [
           /* Standard: stdin, stdout, stderr */
           'inherit', 'inherit', 'inherit',
-          /* Custom: pipe:3, pipe:4, pipe:5 */
-          'pipe', 'pipe', 'pipe',
+          /* Custom: pipe:3, pipe:4 */
+          'pipe', 'pipe',
         ],
       });
 
@@ -70,22 +57,26 @@ async function Video(options : ConvertOptions) {
       }
 
       ffmpegProcess.stdio[3].on('data', () => {
-        const videoTotal = (tracker.video.downloaded / tracker.video.total) * 100;
-        const audioTotal = (tracker.audio.downloaded / tracker.audio.total) * 100;
-        const total = ((videoTotal + audioTotal) / 2);
-        const videoSize = tracker.video.total + tracker.audio.total;
-        // eslint-disable-next-line object-curly-newline
-        if (onDownloading)onDownloading({ percentage: total, size: videoSize });
+        const percentage = ((tracker.downloaded / tracker.total) * 100);
+        const size = tracker.total;
+        if (onDownloading) onDownloading({ percentage, size });
       });
 
       ffmpegProcess.on('close', () => {
-        resolve({ message: `File in ${pathname}`, error: false, videoInfo });
+        const metadata = {
+          artist: videoInfo.videoDetails.author.name,
+          title,
+          album: videoInfo.videoDetails.author.name,
+        };
+        ffmMT.write(pathname, metadata, (err) => {
+          if (err) throw err;
+          resolve({ message: `File in ${pathname}`, error: false, videoInfo });
+        });
       });
 
-      audio.pipe(ffmpegProcess.stdio[4]);
-      video.pipe(ffmpegProcess.stdio[5]);
+      stream.pipe(ffmpegProcess.stdio[4]);
     }
   });
   return promise;
 }
-export default Video;
+export default Audio;
