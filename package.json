@@ -2,10 +2,10 @@
   "name": "yt-converter",
   "version": "1.3.5",
   "description": "A youtube video converter for mp3 and mp4 using node-ytdl and ffmpeg",
-  "main": "./src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
-    "build": "jsdoc -r src -t node_modules/tsd-jsdoc/dist -d lib",
-    "prepublishOnly": "jsdoc -r src -t node_modules/tsd-jsdoc/dist -d lib"
+    "build": "tsc",
+    "prepublish": "tsc"
   },
   "keywords": [
     "youtube",
@@ -19,16 +19,18 @@
   "dependencies": {
     "ffmetadata": "^1.7.0",
     "ffmpeg-static": "^4.4.0",
-    "tsd-jsdoc": "^2.5.0",
     "ytdl-core": "^4.11.3"
   },
-  "types": "lib/index.d.ts",
+  "types": "dist/types.d.ts",
   "devDependencies": {
-    "eslint": "^8.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "typescript": "^5.0.4",
-    "yt-converter": "^1.3.0"
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "repository": {
     "type": "git",
