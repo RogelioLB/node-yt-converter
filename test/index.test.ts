@@ -1,6 +1,6 @@
 import ffmMT from 'ffmetadata';
 
-import { Video, Audio } from '../dist/index';
+import { Video, Audio } from 'yt-converter';
 
 const link = 'https://www.youtube.com/watch?v=_qfnSJeSFLs';
 

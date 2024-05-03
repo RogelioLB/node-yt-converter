@@ -32,7 +32,7 @@
     "eslint-plugin-import": "^2.29.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
-    "yt-converter": "^2.0.1"
+    "yt-converter": "^2.0.2"
   },
   "repository": {
     "type": "git",
