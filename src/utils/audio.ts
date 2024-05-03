@@ -4,7 +4,7 @@ import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
 import ffmMT from 'ffmetadata';
 import parser from './parserTitles';
-import { ConvertOptions, FFmpegProcess, MessageResult } from '../../types';
+import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
 import fileExist from './fileExist';
 
 async function Audio(options : ConvertOptions) {
@@ -21,7 +21,8 @@ async function Audio(options : ConvertOptions) {
   const videoInfo = await ytdl.getInfo(url);
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
-  const fileTitle = title || parser(videoInfo.videoDetails.title);
+  const fileTitle = options?.title || parser(videoInfo.videoDetails.title);
+  console.log(fileTitle);
 
   // Stream audio and video
   const stream = ytdl(url, {
@@ -35,8 +36,11 @@ async function Audio(options : ConvertOptions) {
   const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp3`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
-    if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo });
-    else {
+    if (fileExist(pathname)) {
+      resolve({
+        message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+      });
+    } else {
       const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
         '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
@@ -65,12 +69,14 @@ async function Audio(options : ConvertOptions) {
       ffmpegProcess.on('close', () => {
         const metadata = {
           artist: videoInfo.videoDetails.author.name,
-          title,
+          fileTitle,
           album: videoInfo.videoDetails.author.name,
         };
         ffmMT.write(pathname, metadata, (err) => {
           if (err) throw err;
-          resolve({ message: `File in ${pathname}`, error: false, videoInfo });
+          resolve({
+            message: `File in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+          });
         });
       });
 

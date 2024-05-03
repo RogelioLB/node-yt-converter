@@ -12,7 +12,8 @@ export interface ConvertOptions{
 export interface MessageResult{
     message:string,
     error:boolean,
-    videoInfo:videoInfo
+    videoInfo:videoInfo,
+    pathfile:string
 }
 
 export interface FFmpegProcess extends cp.ChildProcess{

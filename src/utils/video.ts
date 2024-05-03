@@ -3,7 +3,7 @@ import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
 import parser from './parserTitles';
-import { ConvertOptions, FFmpegProcess, MessageResult } from '../../types';
+import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
 import fileExist from './fileExist';
 
 async function Video(options : ConvertOptions) {
@@ -44,7 +44,7 @@ async function Video(options : ConvertOptions) {
   const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp4`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
-    if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo });
+    if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname});
     else {
       const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
         '-loglevel', '8', '-hide_banner',
@@ -79,7 +79,7 @@ async function Video(options : ConvertOptions) {
       });
 
       ffmpegProcess.on('close', () => {
-        resolve({ message: `File in ${pathname}`, error: false, videoInfo });
+        resolve({ message: `File in ${pathname}`, error: false, videoInfo, pathfile: pathname});
       });
 
       audio.pipe(ffmpegProcess.stdio[4]);
