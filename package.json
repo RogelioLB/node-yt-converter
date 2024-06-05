@@ -1,6 +1,6 @@
 {
   "name": "yt-converter",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A youtube video converter for mp3 and mp4 using node-ytdl and ffmpeg",
   "main": "dist/index.js",
   "scripts": {
