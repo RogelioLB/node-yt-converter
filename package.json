@@ -2,7 +2,9 @@
   "name": "yt-converter",
   "version": "2.0.3",
   "description": "A youtube video converter for mp3 and mp4 using node-ytdl and ffmpeg",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
     "prepublish": "tsup"
@@ -22,7 +24,6 @@
     "ffmpeg-static": "^4.4.0",
     "ytdl-core": "^4.11.5"
   },
-  "types": "dist/index.d.ts",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",
