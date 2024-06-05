@@ -4,8 +4,8 @@
   "description": "A youtube video converter for mp3 and mp4 using node-ytdl and ffmpeg",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "prepublish": "tsc"
+    "build": "tsup",
+    "prepublish": "tsup"
   },
   "type": "module",
   "keywords": [
@@ -31,6 +31,7 @@
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "ts-node": "^10.9.2",
+    "tsup": "^8.1.0",
     "typescript": "^5.3.3",
     "yt-converter": "^2.0.2"
   },
