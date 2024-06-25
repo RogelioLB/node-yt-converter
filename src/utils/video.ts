@@ -9,7 +9,7 @@ import cookies from '../../cookies';
 
 async function Video(options : ConvertOptions) {
   const {
-    directory = './', itag, url, title, onDownloading,
+    directory = './', itag, url, title, onDownloading, ffmpegPath
   } = options;
 
   const tracker = {
@@ -50,12 +50,10 @@ async function Video(options : ConvertOptions) {
   const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp4`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
-    if (fileExist(pathname)) {
-      resolve({
-        message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
-      });
-    } else {
-      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
+    if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname});
+    else {
+      const ffmpegProcess = cp.spawn(ffmpegPath ||ffmpeg, [
+        '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
         '-i', 'pipe:5',
@@ -66,12 +64,10 @@ async function Video(options : ConvertOptions) {
       ], {
         windowsHide: true,
         stdio: [
-          /* Standard: stdin, stdout, stderr */
-          'inherit', 'inherit', 'inherit',
-          /* Custom: pipe:3, pipe:4, pipe:5 */
+          'inherit','inherit','inherit',
           'pipe', 'pipe', 'pipe',
         ],
-      });
+      }) as unknown as FFmpegProcess;
 
       if (ffmpegProcess === undefined) {
         reject(new Error('Cannot initialize ffmpeg'));

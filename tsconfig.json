@@ -2,11 +2,13 @@
     "compilerOptions": {
         "esModuleInterop": true,
         "moduleResolution": "Node",
-        "module": "ES2015",
+        "module": "CommonJS",
         "target": "ES2015",
         "outDir": "dist/",
         "declaration": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "noErrorTruncation": true,
+        "noEmitOnError": true
     },
     "exclude": ["node_modules", "dist", "test"]
 }
