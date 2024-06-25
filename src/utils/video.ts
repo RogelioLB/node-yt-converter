@@ -1,10 +1,11 @@
-import ytdl, { videoFormat } from 'ytdl-core';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
 import parser from './parserTitles';
 import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
 import fileExist from './fileExist';
+import cookies from '../../cookies';
 
 async function Video(options : ConvertOptions) {
   const {
@@ -27,27 +28,34 @@ async function Video(options : ConvertOptions) {
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
   const fileTitle = title || parser(videoInfo.videoDetails.title);
-
+  const agent = ytdl.createAgent(cookies);
   // Stream audio and video
   const audio = ytdl(url, {
     filter: 'audioonly',
     quality: 'lowestaudio',
+    agent,
   }).on('progress', (_, downloaded, total) => {
     tracker.audio = { downloaded, total };
   });
   const video = ytdl(url, {
     quality: format?.itag || 'highestvideo',
+    agent,
+    dlChunkSize: 1024 * 1024 * 1024,
   }).on('progress', (_, downloaded, total) => {
     tracker.video = { downloaded, total };
-  });
+  }).on('error', (err) => {
+    console.error(err);
+  }).on('info', (info, format) => console.log(format));
 
   const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp4`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
-    if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname});
-    else {
+    if (fileExist(pathname)) {
+      resolve({
+        message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+      });
+    } else {
       const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
-        '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
         '-i', 'pipe:5',
@@ -79,7 +87,9 @@ async function Video(options : ConvertOptions) {
       });
 
       ffmpegProcess.on('close', () => {
-        resolve({ message: `File in ${pathname}`, error: false, videoInfo, pathfile: pathname});
+        resolve({
+          message: `File in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+        });
       });
 
       audio.pipe(ffmpegProcess.stdio[4]);

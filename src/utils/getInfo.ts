@@ -1,4 +1,4 @@
-import ytdl from 'ytdl-core';
+import ytdl, { videoInfo } from '@distube/ytdl-core';
 
 /**
  * @typedef {object} thumbnail
@@ -37,19 +37,35 @@ import ytdl from 'ytdl-core';
  * @return {Promise<videoInfo>}
  * @memberof module:yt-converter
  */
-const getInfo = (url) => new Promise((resolve, reject) => {
+const getInfo = (url) => new Promise<videoInfo>((resolve, reject) => {
   try {
     ytdl.getInfo(url).then((info) => {
       const {
-        title, author, lengthSeconds, viewCount, likes, dislikes, averageRating, thumbnails,
+        title, author, lengthSeconds, viewCount, likes, averageRating, thumbnails,
       } = info.videoDetails;
 
       const formats = info.formats.map((format) => {
         const {
-          audioBitrate, audioQuality, approxDurationMs, container, hasAudio, hasVideo, itag, quality, qualityLabel,
+          audioBitrate,
+          audioQuality,
+          approxDurationMs,
+          container,
+          hasAudio,
+          hasVideo,
+          itag,
+          quality,
+          qualityLabel,
         } = format;
         return {
-          audioBitrate, audioQuality, approxDurationMs, container, hasAudio, hasVideo, itag, quality, qualityLabel,
+          audioBitrate,
+          audioQuality,
+          approxDurationMs,
+          container,
+          hasAudio,
+          hasVideo,
+          itag,
+          quality,
+          qualityLabel,
         };
       });
 
@@ -62,7 +78,6 @@ const getInfo = (url) => new Promise((resolve, reject) => {
         lengthSeconds,
         viewCount,
         likes,
-        dislikes,
         averageRating,
         thumbnails,
         formats,

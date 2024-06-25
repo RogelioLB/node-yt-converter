@@ -1,4 +1,4 @@
-import ytdl, { videoFormat } from 'ytdl-core';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';

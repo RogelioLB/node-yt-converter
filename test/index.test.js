@@ -1,8 +1,8 @@
 import ffmMT from 'ffmetadata';
 
-import { Video, Audio } from '../dist/index';
+import { Video, Audio } from '../src/index';
 
-const link = 'https://www.youtube.com/watch?v=_qfnSJeSFLs';
+const link = 'https://www.youtube.com/watch?v=s_nc1IVoMxc';
 
 async function test(url) {
   const data = await Audio({
