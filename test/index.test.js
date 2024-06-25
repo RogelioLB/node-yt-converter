@@ -1,6 +1,5 @@
-import ffmMT from 'ffmetadata';
-
-import { Video, Audio } from '../src/index';
+const ffmMT = require('ffmetadata');
+const { Audio } = require('../dist/index');
 
 const link = 'https://www.youtube.com/watch?v=s_nc1IVoMxc';
 
