@@ -57,6 +57,7 @@ Both fuctions need an options object.
 * *directory (optional)*: Path relative where you want the file converted.
 * *itag*: This represents a number of a specific format. [For more information](https://en.wikipedia.org/wiki/YouTube#Quality_and_formats)
 * *onDownloading (optional)* : Function will be executed while the file is downloading.
+* *ffmpegPath (optional)*: Specify the path to the ffmpeg binary. By default uses the path provided by the package. But if you want use on a VM or Hosting maybe you should use a custom path.
 
 Once the functions Video and Audio are executed, returns a promise wich resolve a data object.
 

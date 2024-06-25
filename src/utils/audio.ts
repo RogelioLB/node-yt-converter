@@ -1,4 +1,4 @@
-import ytdl, { videoFormat } from 'ytdl-core';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
@@ -9,7 +9,7 @@ import fileExist from './fileExist';
 
 async function Audio(options : ConvertOptions) {
   const {
-    directory = './', itag, url, title, onDownloading,
+    directory = './', itag, url, title, onDownloading,ffmpegPath
   } = options;
 
   const tracker = {
@@ -22,7 +22,6 @@ async function Audio(options : ConvertOptions) {
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
   const fileTitle = options?.title || parser(videoInfo.videoDetails.title);
-  console.log(fileTitle);
 
   // Stream audio and video
   const stream = ytdl(url, {
@@ -41,7 +40,7 @@ async function Audio(options : ConvertOptions) {
         message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
       });
     } else {
-      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
+      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpegPath ||ffmpeg, [
         '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
@@ -49,17 +48,13 @@ async function Audio(options : ConvertOptions) {
       ], {
         windowsHide: true,
         stdio: [
-          /* Standard: stdin, stdout, stderr */
           'inherit', 'inherit', 'inherit',
-          /* Custom: pipe:3, pipe:4 */
-          'pipe', 'pipe',
+          'pipe', 'pipe', 'pipe',
         ],
       });
-
       if (ffmpegProcess === undefined) {
         reject(new Error('Cannot initialize ffmpeg'));
       }
-
       ffmpegProcess.stdio[3].on('data', () => {
         const percentage = ((tracker.downloaded / tracker.total) * 100);
         const size = tracker.total;

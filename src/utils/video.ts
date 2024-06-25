@@ -1,4 +1,4 @@
-import ytdl, { videoFormat } from 'ytdl-core';
+import ytdl, { videoFormat } from '@distube/ytdl-core';
 import path from 'path';
 import ffmpeg from 'ffmpeg-static';
 import cp from 'child_process';
@@ -8,7 +8,7 @@ import fileExist from './fileExist';
 
 async function Video(options : ConvertOptions) {
   const {
-    directory = './', itag, url, title, onDownloading,
+    directory = './', itag, url, title, onDownloading, ffmpegPath
   } = options;
 
   const tracker = {
@@ -46,7 +46,7 @@ async function Video(options : ConvertOptions) {
   const promise = new Promise<MessageResult>((resolve, reject) => {
     if (fileExist(pathname)) resolve({ message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname});
     else {
-      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpeg, [
+      const ffmpegProcess = cp.spawn(ffmpegPath ||ffmpeg, [
         '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
@@ -58,12 +58,10 @@ async function Video(options : ConvertOptions) {
       ], {
         windowsHide: true,
         stdio: [
-          /* Standard: stdin, stdout, stderr */
-          'inherit', 'inherit', 'inherit',
-          /* Custom: pipe:3, pipe:4, pipe:5 */
+          'inherit','inherit','inherit',
           'pipe', 'pipe', 'pipe',
         ],
-      });
+      }) as unknown as FFmpegProcess;
 
       if (ffmpegProcess === undefined) {
         reject(new Error('Cannot initialize ffmpeg'));

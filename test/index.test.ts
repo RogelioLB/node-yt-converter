@@ -1,14 +1,15 @@
 import ffmMT from 'ffmetadata';
 
-import { Video, Audio } from 'yt-converter';
+import { Video, Audio } from '../src/index';
 
-const link = 'https://www.youtube.com/watch?v=_qfnSJeSFLs';
+const link = 'https://www.youtube.com/watch?v=s_nc1IVoMxc';
 
 async function test(url:string) {
   const data = await Audio({
     url,
     onDownloading: (d) => console.log(`Downloaded ${d.percentage}%`),
     directory: './',
+    ffmpegPath: 'ffmpeg'
   });
   console.log(data.pathfile);
   ffmMT.read(data.pathfile, (err, res) => {
