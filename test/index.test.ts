@@ -9,9 +9,7 @@ async function test(url:string) {
     url,
     onDownloading: (d) => console.log(`Downloaded ${d.percentage}%`),
     directory: './',
-    ffmpegPath: 'ffmpeg'
   });
-  console.log(data);
   ffmMT.read(data.pathfile, (err, res) => {
     if (err) console.error('Error reading metadata', err);
     else console.log(res);

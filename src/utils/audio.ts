@@ -9,7 +9,7 @@ import fileExist from './fileExist';
 
 async function Audio(options : ConvertOptions) {
   const {
-    directory = './', itag, url, title, onDownloading,ffmpegPath
+    directory = './', itag, url, title, onDownloading, ffmpegPath,
   } = options;
 
   const tracker = {
@@ -21,7 +21,7 @@ async function Audio(options : ConvertOptions) {
   const videoInfo = await ytdl.getInfo(url);
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
-  const fileTitle = options?.title || parser(videoInfo.videoDetails.title);
+  const fileTitle = title || parser(videoInfo.videoDetails.title);
 
   // Stream audio and video
   const stream = ytdl(url, {
@@ -40,7 +40,7 @@ async function Audio(options : ConvertOptions) {
         message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
       });
     } else {
-      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpegPath ||ffmpeg, [
+      const ffmpegProcess : FFmpegProcess = cp.spawn(ffmpegPath || ffmpeg, [
         '-loglevel', '8', '-hide_banner',
         '-progress', 'pipe:3',
         '-i', 'pipe:4',
