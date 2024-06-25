@@ -69,7 +69,7 @@ async function Audio(options : ConvertOptions) {
       ffmpegProcess.on('close', () => {
         const metadata = {
           artist: videoInfo.videoDetails.author.name,
-          fileTitle,
+          title: fileTitle,
           album: videoInfo.videoDetails.author.name,
         };
         ffmMT.write(pathname, metadata, (err) => {
