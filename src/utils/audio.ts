@@ -67,6 +67,7 @@ async function Audio(options : ConvertOptions) {
           title: fileTitle,
           album: videoInfo.videoDetails.author.name,
         };
+        ffmMT.setFfmpegPath(ffmpegPath || ffmpeg);
         ffmMT.write(pathname, metadata, (err) => {
           if (err) throw err;
           resolve({

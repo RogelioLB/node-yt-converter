@@ -1,21 +1,11 @@
-import ffmMT from 'ffmetadata';
+import fs from 'fs';
+import { Video, Audio, createStreamAudio } from '../src/index';
 
-import { Video, Audio } from '../src/index';
-
-const link = 'https://www.youtube.com/watch?v=s_nc1IVoMxc';
+const link = 'https://www.youtube.com/watch?v=huOcOPqs-DU';
 
 async function test(url:string) {
-  const data = await Video({
-    url,
-    onDownloading: (d) => console.log(`Downloaded ${d.percentage}%`),
-    directory: './',
-  });
-  ffmMT.read(data.pathfile, (err, res) => {
-    if (err) console.error('Error reading metadata', err);
-    else console.log(res);
-  });
-
-  console.log(data.message);
+  const stream = await createStreamAudio({ url });
+  stream.pipe(fs.createWriteStream('test.mp3'));
 }
 
 test(link);
