@@ -64,3 +64,7 @@ Once the functions Video and Audio are executed, returns a promise wich resolve 
 * *message*
 * *error*
 * *videoInfo*
+
+
+## Stream audio 
+You can also
