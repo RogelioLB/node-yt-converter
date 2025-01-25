@@ -1,4 +1,6 @@
-import ytdl, { videoInfo } from '@distube/ytdl-core';
+import ytdl, {
+  Author, thumbnail, videoFormat,
+} from '@distube/ytdl-core';
 
 /**
  * @typedef {object} thumbnail
@@ -37,37 +39,28 @@ import ytdl, { videoInfo } from '@distube/ytdl-core';
  * @return {Promise<videoInfo>}
  * @memberof module:yt-converter
  */
-const getInfo = (url) => new Promise<videoInfo>((resolve, reject) => {
+
+interface Info{
+  title: string;
+  author: Author;
+  lengthSeconds: string;
+  viewCount: string;
+  likes: number;
+  averageRating: number;
+  thumbnails: Array<thumbnail>;
+  formats: Array<videoFormat>;
+  formatsAudio: Array<videoFormat>;
+  formatsVideo: Array<videoFormat>;
+}
+
+const getInfo = (url) => new Promise<Info>((resolve, reject) => {
   try {
     ytdl.getInfo(url).then((info) => {
       const {
         title, author, lengthSeconds, viewCount, likes, averageRating, thumbnails,
       } = info.videoDetails;
 
-      const formats = info.formats.map((format) => {
-        const {
-          audioBitrate,
-          audioQuality,
-          approxDurationMs,
-          container,
-          hasAudio,
-          hasVideo,
-          itag,
-          quality,
-          qualityLabel,
-        } = format;
-        return {
-          audioBitrate,
-          audioQuality,
-          approxDurationMs,
-          container,
-          hasAudio,
-          hasVideo,
-          itag,
-          quality,
-          qualityLabel,
-        };
-      });
+      const { formats } = info;
 
       const formatsAudio = formats.filter((format) => format.hasAudio && !format.hasVideo);
       const formatsVideo = formats.filter((format) => format.hasVideo && !format.hasAudio);
