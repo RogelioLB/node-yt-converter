@@ -6,6 +6,7 @@ import ffmMT from 'ffmetadata';
 import parser from './parserTitles';
 import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
 import fileExist from './fileExist';
+import { agent, useAgent } from './agent';
 
 async function Audio(options : ConvertOptions) {
   const {
@@ -18,7 +19,7 @@ async function Audio(options : ConvertOptions) {
   };
 
   // Info Youtube
-  const videoInfo = await ytdl.getInfo(url);
+  const videoInfo = await ytdl.getInfo(url, { agent: useAgent ? agent : undefined });
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
   const fileTitle = title || parser(videoInfo.videoDetails.title);
@@ -27,6 +28,7 @@ async function Audio(options : ConvertOptions) {
   const stream = ytdl(url, {
     filter: 'audioonly',
     quality: format?.itag || 'highestaudio',
+    agent: useAgent ? agent : undefined,
   }).on('progress', (_, downloaded, total) => {
     tracker.total = total;
     tracker.downloaded = downloaded;

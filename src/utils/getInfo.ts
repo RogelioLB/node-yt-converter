@@ -1,6 +1,7 @@
 import ytdl, {
   Author, thumbnail, videoFormat,
 } from '@distube/ytdl-core';
+import { agent, useAgent } from './agent';
 
 /**
  * @typedef {object} thumbnail
@@ -55,7 +56,7 @@ interface Info{
 
 const getInfo = (url) => new Promise<Info>((resolve, reject) => {
   try {
-    ytdl.getInfo(url).then((info) => {
+    ytdl.getInfo(url, { agent: useAgent ? agent : undefined }).then((info) => {
       const {
         title, author, lengthSeconds, viewCount, likes, averageRating, thumbnails,
       } = info.videoDetails;

@@ -1,11 +1,14 @@
-import fs from 'fs';
-import { Video, Audio, createStreamAudio } from '../src/index';
+import fs from "fs";
+import { createStreamAudio, createStreamVideo, getInfo } from "../src/index";
 
-const link = 'https://www.youtube.com/watch?v=huOcOPqs-DU';
+const link = "https://www.youtube.com/watch?v=fG07I9UlnoI";
 
-async function test(url:string) {
-  const stream = await createStreamAudio({ url });
-  stream.pipe(fs.createWriteStream('test.mp3'));
+async function test(url: string) {
+  const stream = await createStreamVideo({
+    url,
+    itag: 136,
+  });
+  stream.pipe(fs.createWriteStream("video.mkv"));
 }
 
 test(link);

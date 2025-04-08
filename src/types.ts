@@ -1,5 +1,5 @@
 import cp from 'child_process';
-import stream from 'stream'
+import stream from 'stream';
 import { videoInfo } from '@distube/ytdl-core';
 
 export interface ConvertOptions{
@@ -18,6 +18,6 @@ export interface MessageResult{
     pathfile:string
 }
 
-export interface FFmpegProcess extends Omit<cp.ChildProcess,'stdio'>{
+export interface FFmpegProcess extends Omit<cp.ChildProcess, 'stdio'>{
     stdio:any
 }

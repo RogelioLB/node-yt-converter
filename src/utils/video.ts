@@ -5,6 +5,7 @@ import cp from 'child_process';
 import parser from './parserTitles';
 import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
 import fileExist from './fileExist';
+import { agent, useAgent } from './agent';
 
 async function Video(options : ConvertOptions) {
   const {
@@ -23,7 +24,7 @@ async function Video(options : ConvertOptions) {
   };
 
   // Info Youtube
-  const videoInfo = await ytdl.getInfo(url);
+  const videoInfo = await ytdl.getInfo(url, { agent: useAgent ? agent : undefined });
   let format : videoFormat;
   if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
   const fileTitle = title || parser(videoInfo.videoDetails.title);
@@ -31,12 +32,14 @@ async function Video(options : ConvertOptions) {
   const audio = ytdl(url, {
     filter: 'audioonly',
     quality: 'lowestaudio',
+    agent: useAgent ? agent : undefined,
   }).on('progress', (_, downloaded, total) => {
     tracker.audio = { downloaded, total };
   });
   const video = ytdl(url, {
     quality: format?.itag || 'highestvideo',
     dlChunkSize: 1024 * 1024 * 1024,
+    agent: useAgent ? agent : undefined,
   }).on('progress', (_, downloaded, total) => {
     tracker.video = { downloaded, total };
   });
