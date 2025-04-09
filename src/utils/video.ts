@@ -1,15 +1,20 @@
-import ytdl, { videoFormat } from '@distube/ytdl-core';
-import path from 'path';
-import ffmpeg from 'ffmpeg-static';
-import cp from 'child_process';
-import parser from './parserTitles';
-import { ConvertOptions, FFmpegProcess, MessageResult } from '../types';
-import fileExist from './fileExist';
-import { agent, useAgent } from './agent';
+import ytdl, { videoFormat } from "@distube/ytdl-core";
+import path from "path";
+import ffmpeg from "ffmpeg-static";
+import cp from "child_process";
+import parser from "./parserTitles";
+import { ConvertOptions, FFmpegProcess, MessageResult } from "../types";
+import fileExist from "./fileExist";
+import { agent, useAgent } from "./agent";
 
-async function Video(options : ConvertOptions) {
+async function Video(options: ConvertOptions) {
   const {
-    directory = './', itag, url, title, onDownloading, ffmpegPath,
+    directory = "./",
+    itag,
+    url,
+    title,
+    onDownloading,
+    ffmpegPath,
   } = options;
 
   const tracker = {
@@ -24,67 +29,93 @@ async function Video(options : ConvertOptions) {
   };
 
   // Info Youtube
-  const videoInfo = await ytdl.getInfo(url, { agent: useAgent ? agent : undefined });
-  let format : videoFormat;
-  if (itag) { format = videoInfo.formats.find((fm) => fm.itag === itag); }
+  const videoInfo = await ytdl.getInfo(url, {
+    agent: useAgent ? agent : undefined,
+  });
+  let format: videoFormat;
+  if (itag) {
+    format = videoInfo.formats.find((fm) => fm.itag === itag);
+  }
   const fileTitle = title || parser(videoInfo.videoDetails.title);
   // Stream audio and video
   const audio = ytdl(url, {
-    filter: 'audioonly',
-    quality: 'lowestaudio',
-    agent: useAgent ? agent : undefined,
-  }).on('progress', (_, downloaded, total) => {
-    tracker.audio = { downloaded, total };
-  });
+    quality: "highestaudio",
+  })
+    .on("progress", (_, downloaded, total) => {
+      tracker.audio = { downloaded, total };
+    })
+    .on("error", (error) => {
+      console.error(error);
+    });
   const video = ytdl(url, {
-    quality: format?.itag || 'highestvideo',
-    dlChunkSize: 1024 * 1024 * 1024,
-    agent: useAgent ? agent : undefined,
-  }).on('progress', (_, downloaded, total) => {
-    tracker.video = { downloaded, total };
-  });
+    quality: format?.itag || "highestvideo",
+  })
+    .on("progress", (_, downloaded, total) => {
+      tracker.video = { downloaded, total };
+    })
+    .on("error", (error) => {
+      console.error(error);
+    });
 
   const pathname = path.resolve(process.cwd(), directory, `${fileTitle}.mp4`);
 
   const promise = new Promise<MessageResult>((resolve, reject) => {
     if (fileExist(pathname)) {
       resolve({
-        message: `File already downloaded in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+        message: `File already downloaded in ${pathname}`,
+        error: false,
+        videoInfo,
+        pathfile: pathname,
       });
     } else {
-      const ffmpegProcess = cp.spawn(ffmpegPath || ffmpeg, [
-        '-loglevel', '8', '-hide_banner',
-        '-progress', 'pipe:3',
-        '-i', 'pipe:4',
-        '-i', 'pipe:5',
-        '-map', '0:a',
-        '-map', '1:v',
-        '-c:v', 'copy',
-        `${pathname}`,
-      ], {
-        windowsHide: true,
-        stdio: [
-          'inherit', 'inherit', 'inherit',
-          'pipe', 'pipe', 'pipe',
+      const ffmpegProcess = cp.spawn(
+        ffmpegPath || ffmpeg,
+        [
+          "-loglevel",
+          "8",
+          "-hide_banner",
+          "-progress",
+          "pipe:3",
+          "-i",
+          "pipe:4",
+          "-i",
+          "pipe:5",
+          "-map",
+          "0:a",
+          "-map",
+          "1:v",
+          "-c:v",
+          "copy",
+          `${pathname}`,
         ],
-      }) as unknown as FFmpegProcess;
+        {
+          windowsHide: true,
+          stdio: ["inherit", "inherit", "inherit", "pipe", "pipe", "pipe"],
+        }
+      ) as unknown as FFmpegProcess;
 
       if (ffmpegProcess === undefined) {
-        reject(new Error('Cannot initialize ffmpeg'));
+        reject(new Error("Cannot initialize ffmpeg"));
       }
 
-      ffmpegProcess.stdio[3].on('data', () => {
-        const videoTotal = (tracker.video.downloaded / tracker.video.total) * 100;
-        const audioTotal = (tracker.audio.downloaded / tracker.audio.total) * 100;
-        const total = ((videoTotal + audioTotal) / 2);
+      ffmpegProcess.stdio[3].on("data", () => {
+        const videoTotal =
+          (tracker.video.downloaded / tracker.video.total) * 100;
+        const audioTotal =
+          (tracker.audio.downloaded / tracker.audio.total) * 100;
+        const total = (videoTotal + audioTotal) / 2;
         const videoSize = tracker.video.total + tracker.audio.total;
         // eslint-disable-next-line object-curly-newline
-        if (onDownloading)onDownloading({ percentage: total, size: videoSize });
+        if (onDownloading)
+          onDownloading({ percentage: total, size: videoSize });
       });
 
-      ffmpegProcess.on('close', () => {
+      ffmpegProcess.on("close", () => {
         resolve({
-          message: `File in ${pathname}`, error: false, videoInfo, pathfile: pathname,
+          message: `File in ${pathname}`,
+          error: false,
+          videoInfo,
+          pathfile: pathname,
         });
       });
 
